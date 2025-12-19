@@ -23,6 +23,7 @@ Route::patch('reset_password', [UserController::class, 'resetPassword']);
 Route::get('gift', [GiftController::class, 'index']);      // All Gifts
 Route::get('gift/{id}', [GiftController::class, 'show']);  // Single Gift
 
+// routes/web.php
 
 
 // ---------------- PROTECTED ROUTES (auth required) ---------------- //
