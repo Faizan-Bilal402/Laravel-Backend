@@ -97,6 +97,16 @@ class OrderController extends Controller
         return response()->json(['success' => 1, 'message' => 'Order placed successfully']);
     }
 
+
+
+/** admin panel */
+    public function adminOrders()
+{
+    $orders = Order::with('order_item')->get(); // Sab orders fetch karo
+    return view('admin.dashboard', compact('orders'));
+}
+
+
     /**
      * Display the specified resource.
      */

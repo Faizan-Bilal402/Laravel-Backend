@@ -300,4 +300,37 @@ public function verifyResetPasswordOtp(Request $request)
     return response()->json(['success' => 1, 'message' => 'Password reset successful.']);
 }
 
+
+
+public function adminLogin(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|email|string',
+        'password' => 'required|string'
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    $credentials = $request->only('email', 'password');
+
+    if (!Auth::attempt($credentials)) {
+        return redirect()->back()->with('error', 'Invalid credentials')->withInput();
+    }
+
+    $request->session()->regenerate(); // ⭐ VERY IMPORTANT
+
+    $user = Auth::user();
+
+    if (!$user->is_admin) {
+        Auth::logout();
+        return redirect()->back()->with('error', 'You are not an admin');
+    }
+
+    // Admin login successful → redirect to dashboard
+    return redirect()->route('admin.dashboard');
+}
+
+
 }
