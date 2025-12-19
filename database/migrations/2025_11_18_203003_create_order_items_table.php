@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('order_items', function (Blueprint $table) {
-            $table->id();
+            $table->id()->startingValue(1);
             $table->bigInteger('order_id')->unsigned();
             $table->foreign('order_id')->references('id')->on('orders');
             $table->bigInteger('item_id')->unsigned();
