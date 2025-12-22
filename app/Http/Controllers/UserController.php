@@ -301,35 +301,35 @@ public function verifyResetPasswordOtp(Request $request)
 }
 
 
-
 public function adminLogin(Request $request)
 {
-    $validator = Validator::make($request->all(), [
-        'email' => 'required|email|string',
-        'password' => 'required|string'
+    // 1. Validation
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required'
     ]);
-
-    if ($validator->fails()) {
-        return redirect()->back()->withErrors($validator)->withInput();
-    }
 
     $credentials = $request->only('email', 'password');
 
-    if (!Auth::attempt($credentials)) {
-        return redirect()->back()->with('error', 'Invalid credentials')->withInput();
+    // 2. Attempt Login
+    if (Auth::attempt($credentials, $request->filled('remember'))) {
+        $request->session()->regenerate();
+
+        if (Auth::user()->is_admin) {
+             return redirect()->intended('admin/dashboard');
+        }
+
+        // Agar admin nahi hai
+        // Auth::logout();
+        return back()->withErrors([
+            'email' => 'You do not have admin access.',
+        ])->withInput($request->only('email'));
     }
 
-    $request->session()->regenerate(); // ⭐ VERY IMPORTANT
-
-    $user = Auth::user();
-
-    if (!$user->is_admin) {
-        Auth::logout();
-        return redirect()->back()->with('error', 'You are not an admin');
-    }
-
-    // Admin login successful → redirect to dashboard
-    return redirect()->route('admin.dashboard');
+    // 3. Login Fail (Invalid Credentials)
+    return back()->withErrors([
+        'email' => 'The provided credentials do not match our records.',
+    ])->withInput($request->only('email'));
 }
 
 
