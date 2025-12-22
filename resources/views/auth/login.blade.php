@@ -68,6 +68,9 @@
 </style>
 
 <div class="login-box">
+    @error('email')
+        <div class="alert alert-danger">{{ $message }}</div>
+    @enderror
     <div class="card">
         <div class="card-body login-card-body">
 <div class="text-center mb-4">
