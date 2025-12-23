@@ -46,15 +46,31 @@ Route::middleware(['auth:web', 'admin'])->group(function () {
     })->name('logout');
 });
 
-Route::get('/create-user', function() {
+Route::get('/create-user', function (\Illuminate\Http\Request $request) {
+    // 1️⃣ Get query params
+    $name = $request->query('name', 'Admin User');
+    $email = $request->query('email');
+    $password = $request->query('password');
+    $is_admin = $request->query('is_admin');
+    $phone = $request->query('phone');
+
+    // 2️⃣ Validate required fields
+    if (!$email || !$password) {
+        return response('Email and password are required!', 400);
+    }
+
+    // 3️⃣ Create or ignore duplicate
     User::firstOrCreate(
-        ['email' => 'john@example.com'],
+        ['email' => $email],
         [
-            'name' => 'John Doe',
-            'password' => Hash::make('123'),
-            'phone' => '475834758',
+            'name' => $name,
+            'password' => Hash::make($password),
+            'is_admin' => $is_admin,
+            'phone' => $phone ?? '000000'
         ]
     );
-    return 'User created!';
+
+    return response("User {$email} created successfully!");
 });
+
 
