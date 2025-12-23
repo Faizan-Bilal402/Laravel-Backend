@@ -35,12 +35,13 @@ Route::post('/admin-login', [UserController::class, 'adminLogin'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth:web', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [OrderController::class, 'adminOrders'])
         ->name('admin.dashboard');
 
     Route::post('/logout', function () {
-        Auth::logout();
+        // Auth::logout();
+        Auth::guard('web')->logout();
         return redirect('/login');
     })->name('logout');
 });
