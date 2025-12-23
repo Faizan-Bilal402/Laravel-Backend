@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,3 +45,16 @@ Route::middleware(['auth:web', 'admin'])->group(function () {
         return redirect('/login');
     })->name('logout');
 });
+
+Route::get('/create-user', function() {
+    User::firstOrCreate(
+        ['email' => 'john@example.com'],
+        [
+            'name' => 'John Doe',
+            'password' => Hash::make('123'),
+            'phone' => '475834758',
+        ]
+    );
+    return 'User created!';
+});
+
