@@ -301,6 +301,7 @@ public function verifyResetPasswordOtp(Request $request)
 }
 
 
+
 public function adminLogin(Request $request)
 {
     // 1. Validation
@@ -312,19 +313,19 @@ public function adminLogin(Request $request)
     $credentials = $request->only('email', 'password');
 
     // 2. Attempt Login
-    if (Auth::attempt($credentials, $request->filled('remember'))) {
-        $request->session()->regenerate();
+    if (Auth::guard('web')->attempt($credentials, $request->filled('remember'))) {
+    $request->session()->regenerate();
 
-        if (Auth::user()->is_admin) {
-             return redirect()->intended('admin/dashboard');
-        }
-
-        // Agar admin nahi hai
-        // Auth::logout();
-        return back()->withErrors([
-            'email' => 'You do not have admin access.',
-        ])->withInput($request->only('email'));
+    if (Auth::guard('web')->user()->is_admin) {
+        return redirect()->intended('/admin/dashboard');
     }
+
+    Auth::guard('web')->logout();
+
+    return back()->withErrors([
+        'email' => 'You do not have admin access.',
+    ])->withInput($request->only('email'));
+}
 
     // 3. Login Fail (Invalid Credentials)
     return back()->withErrors([
