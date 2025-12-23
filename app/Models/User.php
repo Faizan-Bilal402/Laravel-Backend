@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
+        'is_admin'
     ];
 
     public function order():HasMany{
