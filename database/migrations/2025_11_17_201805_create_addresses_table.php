@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('city');
             $table->string('state');
             $table->string('country');
-            $table->string('phoneNo');
+            $table->string('pinCode');
             $table->string('save_as');
             $table->boolean('primary')->default(0);
             $table->string('lat')->nullable();
