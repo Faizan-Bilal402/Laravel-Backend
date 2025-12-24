@@ -40,7 +40,7 @@ class AddressController extends Controller
              "save_as" => 'required',
              "address" => 'required',
              "house_no" => 'required',
-             "pinCode" => 'required',
+             "phoneNo" => 'required',
              "city" => 'required',
              "state" => 'required',
              "country" => 'required',
