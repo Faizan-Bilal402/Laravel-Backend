@@ -82,6 +82,11 @@
                 <strong>Address:</strong><br>
                 {{ $order->address }}<br><br>
 
+                <small>
+        <strong>Phone:</strong>
+        {{ $order->user->phone ?? '-' }}
+    </small><br><br>
+
                 <strong>Transaction ID:</strong>
                 {{ $order->transaction_id ?? '-' }}<br>
 
