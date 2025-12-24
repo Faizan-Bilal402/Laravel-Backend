@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AdminController;
 use App\Models\User;
 
 /*
@@ -73,4 +74,6 @@ Route::get('/create-user', function (\Illuminate\Http\Request $request) {
     return response("User {$email} created successfully!");
 });
 
-
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
+    ->middleware('auth')
+    ->name('admin.dashboard');
