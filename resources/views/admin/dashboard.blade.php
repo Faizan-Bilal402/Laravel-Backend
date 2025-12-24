@@ -6,6 +6,7 @@
 <div class="d-flex justify-content-between align-items-center">
     <h1>Admin Dashboard</h1>
 
+    {{-- Logout Button --}}
     <form method="POST" action="{{ route('logout') }}">
         @csrf
         <button class="btn btn-danger btn-sm">
@@ -19,87 +20,96 @@
 
 <p class="mb-3">View your orders and items here</p>
 
-<div class="card">
-    <div class="card-header bg-primary text-white">
-        <h3 class="card-title">Orders Table</h3>
+@foreach($orders as $order)
+<div class="card mb-4 shadow-sm">
+
+    {{-- Order Header --}}
+    <div class="card-header bg-dark text-white d-flex justify-content-between">
+        <div>
+            <strong>Order #{{ $order->id }}</strong><br>
+            <small>User ID: {{ $order->user_id }}</small>
+        </div>
+
+        <div class="text-right">
+            <span class="badge badge-info">
+                {{ strtoupper($order->payment_mode) }}
+            </span>
+
+            @if($order->payment_status)
+                <span class="badge badge-success">Paid</span>
+            @else
+                <span class="badge badge-warning">Pending</span>
+            @endif
+        </div>
     </div>
 
-    <div class="card-body table-responsive p-0" style="max-height: 600px;">
-        <table class="table table-hover table-striped table-bordered text-nowrap">
-            <thead class="thead-dark">
+    {{-- Items Table --}}
+    <div class="card-body p-0">
+        <table class="table table-bordered mb-0">
+            <thead class="thead-light">
                 <tr>
-                    <th>Order ID</th>
-                    <th>User ID</th>
-                    <th>Grand Total</th>
-                    <th>Total Price</th>
-                    <th>Delivery Charge</th>
-                    <th>Tax</th>
-                    <th>Coupon</th>
-                    <th>Discount</th>
-                    <th>Payment Mode</th>
-                    <th>Payment Status</th>
-                    <th>Transaction ID</th>
-                    <th>Address</th>
-                    <th>Items</th>
+                    <th>Item</th>
+                    <th>Description</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Image</th>
                 </tr>
             </thead>
-
             <tbody>
-                @foreach($orders as $order)
+                @foreach($order->order_item as $item)
                 <tr>
-                    <td>{{ $order->id }}</td>
-                    <td>{{ $order->user_id }}</td>
-                    <td>${{ number_format($order->grandTotal, 2) }}</td>
-                    <td>${{ number_format($order->totalPrice, 2) }}</td>
-                    <td>${{ number_format($order->total_delivery_charge, 2) }}</td>
-                    <td>${{ number_format($order->tax, 2) }}</td>
-                    <td>{{ $order->coupon ?? '-' }}</td>
-                    <td>${{ number_format($order->discount ?? 0, 2) }}</td>
+                    <td><strong>{{ $item->name }}</strong></td>
+                    <td>{{ $item->description ?? '-' }}</td>
                     <td>
-                        <span class="badge badge-info">
-                            {{ strtoupper($order->payment_mode) }}
+                        <span class="badge badge-secondary">
+                            {{ $item->quantity }}
                         </span>
                     </td>
+                    <td>${{ number_format($item->price, 2) }}</td>
                     <td>
-                        @if($order->payment_status)
-                            <span class="badge badge-success">Paid</span>
+                        @if($item->cover)
+                            <img src="{{ $item->cover }}" width="50" class="img-thumbnail">
                         @else
-                            <span class="badge badge-warning">Pending</span>
+                            -
                         @endif
-                    </td>
-                    <td>{{ $order->transaction_id ?? '-' }}</td>
-                    <td>{{ $order->address }}</td>
-                    <td>
-                        <ul class="mb-0 pl-3">
-                            @foreach($order->order_item as $item)
-                            <li class="mb-2">
-                                <strong>{{ $item->name }}</strong>
-                                ({{ $item->description ?? '-' }})<br>
-
-                                Qty:
-                                <span class="badge badge-secondary">
-                                    {{ $item->quantity }}
-                                </span>
-                                |
-                                Price:
-                                ${{ number_format($item->price, 2) }}
-
-                                @if($item->cover)
-                                    <br>
-                                    <img src="{{ $item->cover }}"
-                                         alt="{{ $item->name }}"
-                                         width="50"
-                                         class="img-thumbnail mt-1">
-                                @endif
-                            </li>
-                            @endforeach
-                        </ul>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
+
+    {{-- Order Footer --}}
+    <div class="card-footer bg-light">
+        <div class="row">
+            <div class="col-md-8">
+                <strong>Delivery Address:</strong><br>
+                {{ $order->address }}
+            </div>
+
+            <div class="col-md-4 text-right">
+                <p class="mb-1">Subtotal: ${{ number_format($order->totalPrice, 2) }}</p>
+                <p class="mb-1">Delivery: ${{ number_format($order->total_delivery_charge, 2) }}</p>
+                <p class="mb-1">Tax: ${{ number_format($order->tax, 2) }}</p>
+
+                @if($order->coupon)
+                    <p class="mb-1 text-success">
+                        Coupon ({{ $order->coupon }}): 
+                        -${{ number_format($order->discount, 2) }}
+                    </p>
+                @endif
+
+                <h5 class="mt-2">
+                    Grand Total:
+                    <span class="text-primary">
+                        ${{ number_format($order->grandTotal, 2) }}
+                    </span>
+                </h5>
+            </div>
+        </div>
+    </div>
+
 </div>
+@endforeach
 
 @stop
