@@ -83,6 +83,10 @@
                 {{ $order->address }}<br><br>
 
                 <small>
+    <strong>Name:</strong>
+    {{ $order->user->name ?? '-' }}
+</small><br>
+                <small>
         <strong>Phone:</strong>
         {{ $order->user->phone ?? '-' }}
     </small><br><br>
