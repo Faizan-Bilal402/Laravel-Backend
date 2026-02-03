@@ -81,14 +81,13 @@ class OrderController extends Controller
         $newArray = array_map(function ($item) use ($order_id) {
             return [
                 'order_id' => $order_id,
-                'created_at' => now(),
-                'updated_at' => now(),
                 'item_id' => $item['item_id'],
                 'name' => $item['name'],
-                'description' => $item['description'],
                 'price' => $item['price'],
                 'quantity' => $item['quantity'],
-                'cover' => $item['cover']
+                'cover' => $item['cover'],
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
         }, $items);
 
