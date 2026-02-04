@@ -15,14 +15,25 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $user_id = Auth::user() -> id;
-        $orders = Order::where('user_id', $user_id)->with('order_item')->get();
-        $server = config('app.server');
+   public function index(Request $request)
+{
+    $user = $request->user();
 
-        return response()->json(['data' => $orders, 'server_base_url' => $server]);
+    if (!$user) {
+        return response()->json(['message' => 'Unauthenticated'], 401);
     }
+
+    // ✅ ADMIN: LOAD ALL ORDERS WITH USER DATA
+    $orders = Order::with([
+        'order_item',
+        'user:id,name,phone'
+    ])->latest()->get();
+
+    return response()->json([
+        'data' => $orders
+    ]);
+}
+
 
     /**
      * Show the form for creating a new resource.
