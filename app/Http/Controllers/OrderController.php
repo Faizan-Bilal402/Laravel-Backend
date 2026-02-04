@@ -15,24 +15,26 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-   public function index(Request $request)
+public function index(Request $request)
 {
-    $user = $request->user();
-
-    if (!$user) {
+    // Admin ke liye auth check optional hota hai
+    if (!$request->user()) {
         return response()->json(['message' => 'Unauthenticated'], 401);
     }
 
-    // ✅ ADMIN: LOAD ALL ORDERS WITH USER DATA
     $orders = Order::with([
         'order_item',
-        'user:id,name,phone'
+        'user'   // 👈 FULL USER LOAD (name, phone, email sab)
     ])->latest()->get();
 
+     $server = config('app.server');
+
     return response()->json([
-        'data' => $orders
+        'data' => $orders,
+        'server_base_url' => $server
     ]);
 }
+
 
 
     /**
